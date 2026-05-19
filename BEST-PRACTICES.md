@@ -9,21 +9,21 @@
 
 ## 📚 Table of Contents
 
-- [Overview](#overview)
-- [Git Architecture](#git-architecture)
-- [Remote Repository Patterns](#remote-repository-patterns)
-- [Branching Strategies](#branching-strategies)
-- [Workflow Models](#workflow-models)
+- [Overview](#-overview)
+- [Git Architecture](#-git-architecture)
+- [Remote Repository Patterns](#-remote-repository-patterns)
+- [Branching Strategies](#-branching-strategies)
+- [Workflow Models](#-workflow-models)
   - [Feature Branch Workflow](#feature-branch-workflow)
   - [Integration Branch Workflow](#integration-branch-workflow)
-- [Merge vs Rebase](#merge-vs-rebase)
-- [Pull Request Workflow](#pull-request-workflow)
-- [Branch Management](#branch-management)
-- [Enterprise Best Practices](#enterprise-best-practices)
-- [Industry Workflow Models](#industry-workflow-models)
-- [Common Pitfalls](#common-pitfalls)
-- [Recommended Workflow](#recommended-workflow)
-- [Quick Reference](#quick-reference)
+- [Merge vs Rebase](#-merge-vs-rebase)
+- [Pull Request Workflow](#-pull-request-workflow)
+- [Branch Management](#-branch-management)
+- [Enterprise Best Practices](#-enterprise-best-practices)
+- [Industry Workflow Models](#-industry-workflow-models)
+- [Common Pitfalls](#-common-pitfalls)
+- [Recommended Workflow](#-recommended-workflow)
+- [Quick Reference](#-quick-reference)
 
 ---
 
@@ -70,11 +70,17 @@ Enterprise and open-source projects commonly use a dual-remote architecture:
 └───────────────┘    └──────────────────┘
 ```
 
-**Example:**
+**Actual Remote Configuration:**
+
 ```bash
-origin   → aayushrai-blip/GIT-FOR-DEVOPS    # Your fork
-upstream → aayushrai23/GIT-FOR-DEVOPS       # Main repository
+# Your fork (origin) — writable, your personal copy
+origin   → git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git
+
+# Main repository (upstream) — source of truth
+upstream → git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git
 ```
+
+> **Note:** This setup uses SSH host aliases (`github-company` and `github-personal`) configured in `~/.ssh/config` to manage multiple GitHub accounts. See [Stage 1 — SSH Multi-Account Setup](./Stage-01-Version-Control/SSH-Multi-Account-Setup.md) for details.
 
 ---
 
@@ -100,18 +106,26 @@ upstream → aayushrai23/GIT-FOR-DEVOPS       # Main repository
 | **Risk** | High - protected by rules |
 | **Branches** | `main`, `integration`, release branches |
 
-**Setup Commands:**
-```bash
-# Add upstream remote
-git remote add upstream https://github.com/aayushrai23/GIT-FOR-DEVOPS.git
+### Setup Commands
 
-# Verify remotes
+```bash
+# Step 1: Clone your fork (this automatically sets origin)
+git clone git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git
+cd GIT-FOR-DEVOPS
+
+# Step 2: Add upstream remote (the main/source repository)
+git remote add upstream git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git
+
+# Step 3: Verify remotes
 git remote -v
-# origin    https://github.com/aayushrai-blip/GIT-FOR-DEVOPS.git (fetch)
-# origin    https://github.com/aayushrai-blip/GIT-FOR-DEVOPS.git (push)
-# upstream  https://github.com/aayushrai23/GIT-FOR-DEVOPS.git (fetch)
-# upstream  https://github.com/aayushrai23/GIT-FOR-DEVOPS.git (push)
+# origin    git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git (fetch)
+# origin    git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git (push)
+# upstream  git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git (fetch)
+# upstream  git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git (push)
 ```
+
+> **Why SSH aliases instead of `github.com`?**
+> When you manage multiple GitHub accounts (personal + company), you can't use `git@github.com` for both — SSH won't know which key to use. SSH host aliases like `github-company` and `github-personal` solve this by mapping each alias to a different SSH key in your `~/.ssh/config`.
 
 ---
 
@@ -642,7 +656,9 @@ feat(auth): implement OAuth2 login flow
 - Add user session management
 
 Closes #123
+```
 
+```bash
 fix(api): resolve race condition in payment processing
 
 The payment processor was not handling concurrent requests
@@ -653,13 +669,17 @@ properly, leading to duplicate charges.
 - Add comprehensive error handling
 
 Fixes #456
+```
 
+```bash
 docs(readme): update installation instructions
 
 - Add Docker setup steps
 - Update Node.js version requirement
 - Fix broken links
+```
 
+```bash
 chore(deps): upgrade dependencies to latest versions
 
 - Upgrade express to v4.18.2
@@ -1072,15 +1092,19 @@ git push --force-with-lease origin feature/my-work
 ```bash
 # 1. Fork the repository on GitHub
 
-# 2. Clone your fork
-git clone https://github.com/YOUR-USERNAME/REPO-NAME.git
-cd REPO-NAME
+# 2. Clone your fork (using SSH alias for multi-account setup)
+git clone git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git
+cd GIT-FOR-DEVOPS
 
-# 3. Add upstream remote
-git remote add upstream https://github.com/ORIGINAL-OWNER/REPO-NAME.git
+# 3. Add upstream remote (the main/source repository)
+git remote add upstream git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git
 
 # 4. Verify remotes
 git remote -v
+# origin    git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git (fetch)
+# origin    git@github-company:aayushrai-blip/GIT-FOR-DEVOPS.git (push)
+# upstream  git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git (fetch)
+# upstream  git@github-personal:aayushrai23/GIT-FOR-DEVOPS.git (push)
 ```
 
 #### Phase 2: Daily Development Workflow
@@ -1222,7 +1246,7 @@ git stash apply stash@{0}                # Apply specific stash
 
 # === TAGGING ===
 git tag v1.0.0                           # Create lightweight tag
-git tag -a v1.0.0 -m "Release 1.0"       # Create annotated tag
+git tag -a v1.0.0 -m "Release 1.0"      # Create annotated tag
 git push origin --tags                   # Push tags to remote
 
 # === HELP ===
@@ -1356,8 +1380,8 @@ This document is provided as-is for educational purposes.
 
 ---
 
-**Last Updated:** May 2026  
-**Author:** DevOps Engineering Practice  
+**Last Updated:** May 2026
+**Author:** Aayush Rai
 **Version:** 2.0
 
 ---
@@ -1366,4 +1390,4 @@ This document is provided as-is for educational purposes.
 
 ```
 Made with ❤️ for the DevOps Community
-
+```
